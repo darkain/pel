@@ -291,7 +291,7 @@ class PelDataWindow {
             if ($size <= 0)
             $size += $this->size - $start;
         } else {
-            $size = $this->size - $start;
+            $size = $this->size - $start - 1;
         }
 
         $this->validateOffset($start);
