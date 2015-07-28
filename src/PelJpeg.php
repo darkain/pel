@@ -647,9 +647,9 @@ class PelJpeg {
         /* JPEG data is stored in big-endian format. */
         $d->setByteOrder(PelConvert::BIG_ENDIAN);
 
-        for ($i = 0; $i < 7; $i++)
-        if ($d->getByte($i) != 0xFF)
-        break;
+        for ($i = 0; $i < 7; $i++){
+            if ($d->getByte($i) != 0xFF) break;
+        }
 
         return $d->getByte($i) == PelJpegMarker::SOI;
     }

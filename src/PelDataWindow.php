@@ -233,7 +233,6 @@ class PelDataWindow {
      */
     function getClone($start = false, $size = false) {
         $c = clone $this;
-
         if (is_int($start))
         $c->setWindowStart($start);
 
@@ -255,9 +254,10 @@ class PelDataWindow {
      * invalid a new {@link PelDataWindowOffsetException} is thrown.
      */
     private function validateOffset($o) {
-        if ($o < 0 || $o >= $this->size)
-        throw new PelDataWindowOffsetException('Offset %d not within [%d, %d]',
-        $o, 0, $this->size-1);
+        if ($o < 0 || $o >= $this->size) {
+            throw new PelDataWindowOffsetException('Offset %d not within [%d, %d]',
+                $o, 0, $this->size-1);
+        }
     }
 
 
@@ -283,8 +283,6 @@ class PelDataWindow {
         if (is_int($start)) {
             if ($start < 0)
             $start += $this->size;
-
-            $this->validateOffset($start);
         } else {
             $start = 0;
         }
@@ -292,11 +290,12 @@ class PelDataWindow {
         if (is_int($size)) {
             if ($size <= 0)
             $size += $this->size - $start;
-
-            $this->validateOffset($start+$size);
         } else {
             $size = $this->size - $start;
         }
+
+        $this->validateOffset($start);
+        if ($size) $this->validateOffset($start+$size);
 
         return substr($this->data, $this->start + $start, $size);
     }
@@ -316,6 +315,7 @@ class PelDataWindow {
     function getByte($o = 0) {
         /* Validate the offset --- this throws an exception if offset is
          * out of range. */
+
         $this->validateOffset($o);
 
         /* Translate the offset into an offset into the data. */

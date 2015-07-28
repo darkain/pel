@@ -426,8 +426,9 @@ class PelIfd implements IteratorAggregate, ArrayAccess {
                 switch ($format) {
                     case PelFormat::BYTE:
                         $v =  new PelEntryByte($tag);
-                        for ($i = 0; $i < $components; $i++)
-                        $v->addNumber($data->getByte($i));
+                        for ($i = 0; $i < $components; $i++){
+                            $v->addNumber($data->getByte($i));
+                        }
                         return $v;
 
                     case PelFormat::SBYTE:
@@ -513,15 +514,19 @@ class PelIfd implements IteratorAggregate, ArrayAccess {
             /* Some images have a broken length, so we try to carefully
              * check the length before we store the thumbnail. */
             if ($offset + $length > $d->getSize()) {
-                Pel::maybeThrow(new PelIfdException('Thumbnail length %d bytes ' .
-                                            'adjusted to %d bytes.',
-                $length,
-                $d->getSize() - $offset));
+                Pel::maybeThrow(new PelIfdException(
+                    'Thumbnail length %d bytes adjusted to %d bytes.',
+                    $length,
+                    $d->getSize() - $offset)
+                );
+
                 $length = $d->getSize() - $offset;
             }
 
             /* Now set the thumbnail normally. */
-            $this->setThumbnail($d->getClone($offset, $length));
+            if ($length > 0) {
+                $this->setThumbnail($d->getClone($offset, $length));
+            }
         }
     }
 
@@ -543,6 +548,7 @@ class PelIfd implements IteratorAggregate, ArrayAccess {
         while ($d->getByte($size - 2) != 0xFF ||
         $d->getByte($size - 1) != PelJpegMarker::EOI) {
             $size--;
+            if ($size < 2) break;
         }
 
         if ($size != $d->getSize())
