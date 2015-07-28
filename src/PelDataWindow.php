@@ -290,12 +290,12 @@ class PelDataWindow {
         if (is_int($size)) {
             if ($size <= 0)
             $size += $this->size - $start;
+            $this->validateOffset($start+$size);
         } else {
-            $size = $this->size - $start - 1;
+            $size = $this->size - $start;
         }
 
         $this->validateOffset($start);
-        if ($size) $this->validateOffset($start+$size);
 
         return substr($this->data, $this->start + $start, $size);
     }
